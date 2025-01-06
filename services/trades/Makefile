@@ -21,4 +21,4 @@ run-multistage: build-multistage
 		-e KAFKA_BROKER_ADDRESS=redpanda:9092 \
 		trades:multistage
 
-build-all: build build-multistage # builds both images 
+build-all: build build-multistage # builds both images

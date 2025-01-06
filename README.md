@@ -6,7 +6,7 @@ Open source the ability to connect, transform and process data in real time
 
 # Local development (no Docker)
 run-local:
-    KAFKA_BROKER_ADDRESS=localhost:19092 
+    KAFKA_BROKER_ADDRESS=localhost:19092
     uv run python run.py
 
 # Docker container run
@@ -21,4 +21,8 @@ run-internal: build
     docker run -it \
         --network redpanda_network \
         -e KAFKA_BROKER_ADDRESS=redpanda:29092 \
-        trades 
+        trades
+
+
+# pre commit hooks
+https://stefaniemolin.com/articles/devx/pre-commit/setup-guide/

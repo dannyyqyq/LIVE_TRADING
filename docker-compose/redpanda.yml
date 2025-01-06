@@ -3,7 +3,7 @@ name: redpanda-dev-cluster
 networks:
   redpanda_network:
     driver: bridge
-    name: redpanda_network # Allows container communication + "inspect" : docker network 
+    name: redpanda_network # Allows container communication + "inspect" : docker network
 volumes:
   redpanda: null
 services:

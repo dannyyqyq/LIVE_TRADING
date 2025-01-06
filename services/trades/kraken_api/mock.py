@@ -1,11 +1,12 @@
 # Mock Kraken API
 
-from pydantic import BaseModel
 from datetime import datetime
-from typing import List
 from time import sleep
+from typing import List
+
 from .trade import Trade
-        
+
+
 class KrakenMockAPI:
     def __init__(self, pair: str):
         self.pair = pair

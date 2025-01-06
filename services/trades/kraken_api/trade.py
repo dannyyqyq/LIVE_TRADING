@@ -1,8 +1,11 @@
 # Mock Kraken API
 
-from pydantic import BaseModel, field_validator
 from datetime import datetime
 from typing import Optional
+
+from pydantic import BaseModel
+
+
 class Trade(BaseModel):
     # Data model for a single trade
     """
@@ -14,22 +17,22 @@ class Trade(BaseModel):
     "trade_id": 4665906,
     "timestamp": "2023-09-25T07:49:37.708706Z"
     """
+
     pair: str
     price: float
     volume: float
     timestamp: datetime
     timestamp_ms: Optional[int] = None
-    
-    
+
     # TODO: let Pydantic do the initialization of timestamp_ms from timestamp
-    
+
     # @property
     # def timestamp_ms(self) -> int:
     #     """
     #     converts the timestamp to milliseconds
     #     """
     #     return int(self.timestamp.timestamp() * 1000)
-    
+
     # @field_validator("timestamp_ms",mode="before")
     # def compute_timestamp_ms(cls, v, values):
     #     """
@@ -37,7 +40,7 @@ class Trade(BaseModel):
     #     This function is called automatically by Pydantic before the trade object is created.
     #     """
     #     return int(values.data["timestamp"].timestamp() * 1000)
-    
+
     # @field_validator("timestamp_ms", mode="before")
     # def compute_timestamp_ms(cls, v, values): # pydantic arguments
     #     """
@@ -47,10 +50,10 @@ class Trade(BaseModel):
     #     timestamp = values.get("timestamp")
     #     if timestamp:
     #         return int(timestamp.timestamp() * 1000)
-    #     return v 
-    
+    #     return v
+
     def to_dict(self):
-        return self.model_dump_json() # convert to dictionary format for serialization
+        return self.model_dump_json()  # convert to dictionary format for serialization
 
         # return {
         #     "pair": self.pair,
@@ -59,4 +62,3 @@ class Trade(BaseModel):
         #     "timestamp_ms": self.timestamp_ms,
         #     "timestamp": self.timestamp,
         # }
-    

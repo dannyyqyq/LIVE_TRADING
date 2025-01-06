@@ -19,4 +19,3 @@ RUN uv sync --frozen
 
 # Presuming there is a `my_app` command provided by the project
 CMD ["uv", "run", "run.py"]
-
