@@ -14,6 +14,7 @@ class Trade(BaseModel):
     price: float
     volume: float
     timestamp: str
+    timestamp_ms: int
 
     @classmethod
     def from_kraken_api_response(
