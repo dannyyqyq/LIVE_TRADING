@@ -41,7 +41,9 @@ def main(
                 # serialize the trade as bytes
 
                 # push the serialized message to the topic
-                message = topic.serialize(key=trade.pair, value=trade.to_dict())
+                message = topic.serialize(
+                    key=trade.pair.replace("/", "_"), value=trade.to_dict()
+                )
                 producer.produce(topic=topic.name, value=message.value, key=message.key)
 
                 logger.info(f"Pushed to Kafka: {trade}")
