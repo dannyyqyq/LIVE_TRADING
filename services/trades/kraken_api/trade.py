@@ -1,59 +1,49 @@
 # Mock Kraken API
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel
 
 
 class Trade(BaseModel):
-    # Data model for a single trade
     """
-    "symbol": "MATIC/USD",
-    "side": "sell",
-    "price": 0.5117,
-    "qty": 40.0,
-    "ord_type": "market",
-    "trade_id": 4665906,
-    "timestamp": "2023-09-25T07:49:37.708706Z"
+    A trade from the Kraken API.
     """
 
     pair: str
     price: float
     volume: float
-    timestamp: datetime
-    timestamp_ms: Optional[int] = None
+    timestamp: str
 
-    # TODO: let Pydantic do the initialization of timestamp_ms from timestamp
+    @classmethod
+    def from_kraken_api_response(
+        cls,
+        pair: str,
+        price: float,
+        volume: float,
+        timestamp: datetime,
+    ) -> "Trade":
+        return cls(
+            pair=pair,
+            price=price,
+            volume=volume,
+            timestamp=timestamp,
+            timestamp_ms=cls._datestr2milliseconds(timestamp),
+        )
 
-    # @property
-    # def timestamp_ms(self) -> int:
-    #     """
-    #     converts the timestamp to milliseconds
-    #     """
-    #     return int(self.timestamp.timestamp() * 1000)
+    @staticmethod  # The method is defined as a static method. This means it doesn't rely on the instance (self) or class (cls) to work and can be called directly using the class name.
+    def _datestr2milliseconds(datestr: str) -> int:
+        return int(
+            datetime.strptime(datestr, "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() * 1000
+        )
 
-    # @field_validator("timestamp_ms",mode="before")
-    # def compute_timestamp_ms(cls, v, values):
-    #     """
-    #     Converts the timestamp to millieseconds.
-    #     This function is called automatically by Pydantic before the trade object is created.
-    #     """
-    #     return int(values.data["timestamp"].timestamp() * 1000)
+    def to_str(self) -> str:
+        # pydanctic model to string
+        return self.model_dump_json()
 
-    # @field_validator("timestamp_ms", mode="before")
-    # def compute_timestamp_ms(cls, v, values): # pydantic arguments
-    #     """
-    #     Converts the timestamp to millieseconds.
-    #     This function is called automatically by Pydantic before the trade object is created.
-    #     """
-    #     timestamp = values.get("timestamp")
-    #     if timestamp:
-    #         return int(timestamp.timestamp() * 1000)
-    #     return v
-
-    def to_dict(self):
-        return self.model_dump_json()  # convert to dictionary format for serialization
+    def to_dict(self) -> dict:
+        # pydanctic model to dictionary
+        return self.model_dump()
 
         # return {
         #     "pair": self.pair,
