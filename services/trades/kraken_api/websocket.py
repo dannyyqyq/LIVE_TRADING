@@ -58,12 +58,11 @@ class KrakenWebsocketAPI:
         trades = []
 
         for trade in trades_data:
-            trade_obj = Trade(
+            trade_obj = Trade.from_kraken_api_response(
                 pair=trade["symbol"],
                 price=trade["price"],
                 volume=trade["qty"],
                 timestamp=trade["timestamp"],
-                timestamp_ms=datestr2milliseconds(trade["timestamp"]),
             )
             trades.append(trade_obj)
 
