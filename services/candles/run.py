@@ -15,6 +15,8 @@ def init_candle(trade: dict) -> dict:
         "low": trade["price"],
         "close": trade["price"],
         "volume": trade["volume"],
+        "timestamp_ms": trade["timestamp_ms"],
+        "pair": trade["pair"],
     }
 
 
@@ -26,6 +28,8 @@ def update_candle(candle: dict, trade: dict) -> dict:
     candle["low"] = min(candle["low"], trade["price"])
     candle["close"] = trade["price"]
     candle["volume"] += trade["volume"]
+    candle["timestamp_ms"] = trade["timestamp_ms"]
+    candle["pair"] = trade["pair"]
     return candle
 
 
@@ -88,6 +92,8 @@ def main(
     # Create a streaming dataframe
     sdf = app.dataframe(input_topic)
 
+    # Aggregation of trades into candles using tunmbling windows
+
     # Define a tumbling window
     sdf = sdf.tumbling_window(
         duration_ms=timedelta(seconds=candle_seconds),
@@ -107,6 +113,39 @@ def main(
     Emit the final candle only after the window ends
     sdf_final = sdf.final()
     """
+
+    # Extract open,high,low,close,volume,timestamp_ms,pair from the candle
+    sdf["open"] = sdf["value"]["open"]
+    sdf["high"] = sdf["value"]["high"]
+    sdf["low"] = sdf["value"]["low"]
+    sdf["close"] = sdf["value"]["close"]
+    sdf["volume"] = sdf["value"]["volume"]
+    sdf["timestamp_ms"] = sdf["value"]["timestamp_ms"]
+    sdf["pair"] = sdf["value"]["pair"]
+
+    # Extract window start and end timestamps
+    sdf["window_start_ms"] = sdf["start"]
+    sdf["window_end_ms"] = sdf["end"]
+
+    # Keep only the relevant column
+    sdf = sdf[
+        [
+            "pair",
+            "timestamp_ms",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "window_start_ms",
+            "window_end_ms",
+        ]
+    ]
+
+    # For debugging purposes, log the candles
+    # sdf = sdf.print() # Can use this to debug the candles too
+    sdf = sdf.update(lambda value: logger.info(f"Candle: {value}"))
+    # sdf = sdf.update(lambda value: breakpoint())
 
     # Push the candles to the output topic
     sdf = sdf.to_topic(topic=output_topic)
