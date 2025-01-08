@@ -1,0 +1,14 @@
+[project]
+name = "technical-indicators"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "loguru>=0.7.3",
+    "pydantic-settings>=2.7.1",
+    "ta-lib",
+]
+
+[tool.uv.sources]
+ta-lib = { path = "ta_lib-0.6.0-cp312-cp312-win_amd64.whl" }

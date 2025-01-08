@@ -55,3 +55,51 @@ run-internal: build
 
 # pre commit hooks
 https://stefaniemolin.com/articles/devx/pre-commit/setup-guide/
+
+# Session 3
+# Redpanda and QuixStream: Partitioning and Message Keys
+
+## 1. Partitions in Redpanda
+
+In **Redpanda** (a Kafka-compatible event streaming platform), data is divided into **partitions**. Each partition is an ordered, immutable sequence of messages, and each message within a partition has an **offset**. Partitions enable **parallel processing** of data, improving scalability and fault tolerance.
+
+### Partitioning Logic:
+- **Single Key**: Messages with the same key are directed to the same partition, ensuring message order within that key.
+- **No Key**: Redpanda uses a round-robin strategy or another hashing mechanism to assign messages to partitions.
+
+## 2. Message Keys in Redpanda
+
+A **message key** is a piece of data associated with each message and determines the partition to which the message belongs.
+
+### Single Message Key:
+- A single key (e.g., `user_id` or `order_id`) ensures that all messages with the same key are directed to the same partition.
+- This guarantees **message order** for a particular key.
+  
+#### Example:
+- **Key**: `user_id`
+- All messages with `user_id=123` will be sent to the same partition, ensuring sequential processing.
+
+### Multiple Message Keys:
+- With **multiple keys**, the partition assignment can be more complex.
+- **Composite Key**: Multiple fields can be combined into a single key to ensure data is partitioned based on a combination of attributes.
+
+#### Example:
+- **Composite Key**: `user_id_transaction_id`
+- Messages with different `user_id` and `transaction_id` combinations are assigned to partitions based on the composite key.
+
+## 3. QuixStream and Partitioning with Keys
+
+**QuixStream** allows you to build real-time streaming applications and integrates with **Redpanda** as the backend for event streaming. You can control how data is partitioned based on **message keys** in QuixStream.
+
+### Single Message Key in QuixStream:
+- Use a **single key** to ensure that related messages are processed together.
+  
+#### Example:
+```python
+from quixstreaming import *
+
+# Create a message with a single key
+message = Message(key="user_id", value="order details")
+
+# Send the message to a topic (using QuixStream's producer)
+producer.send("order-topic", message)
