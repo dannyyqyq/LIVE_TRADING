@@ -53,6 +53,7 @@ def main(
     kafka_output_topic: str,
     kafka_consumer_group: str,
     candle_seconds: int,
+    emit_incomplete_candles: bool,
 ):
     """
     3 Steps:
@@ -66,6 +67,7 @@ def main(
         kafka_output_topic (str): Kafka output topic
         kafka_consumer_group (str): Kafka consumer group
         candle_seconds (int): Candle duration in seconds
+        emit_incomplete_candles(bool): Emit incomplete candles ore the final one
     """
     logger.info("Starting candles service")
 
@@ -107,7 +109,13 @@ def main(
 
     # Emit all intermediate candles to make system more responsive
     # Candles will be recomputed everytime a new trade arrives
-    sdf = sdf.current()
+
+    if emit_incomplete_candles:
+        # Emit all intermediate candles to make system more responsive
+        sdf = sdf.current()
+    else:
+        # Emit the final candle only after the window ends
+        sdf = sdf.final()
 
     """
     Emit the final candle only after the window ends
@@ -163,4 +171,5 @@ if __name__ == "__main__":
         kafka_output_topic=config.kafka_output_topic,
         kafka_consumer_group=config.kafka_consumer_group,
         candle_seconds=config.candle_seconds,
+        emit_incomplete_candles=config.emit_incomplete_candles,
     )
