@@ -9,7 +9,7 @@ class Config(BaseSettings):
     kafka_input_topic: str
     kafka_output_topic: str
     kafka_consumer_group: str
-    num_candles_in_state: int = 60
+    max_candles_in_state: int = 60
 
 
 config = Config()
