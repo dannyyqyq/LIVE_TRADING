@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "loguru>=0.7.3",
     "pydantic-settings>=2.7.1",
+    "quixstreams>=2.5.1",
     "ta-lib",
 ]
 
