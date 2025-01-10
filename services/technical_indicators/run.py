@@ -1,6 +1,7 @@
 from candle import update_candles
 from loguru import logger
 from quixstreams import Application
+from technical_indicators import compute_indicators
 
 
 def main(
@@ -45,12 +46,19 @@ def main(
     # Create a Streaming DataFrame so we can start transforming data in real time
     sdf = app.dataframe(topic=input_topic)
 
+    # Update the list of candles in state
     sdf = sdf.apply(
         update_candles,
         stateful=True,
     )
 
-    sdf = sdf.update(lambda value: logger.info(f"Candle: {value}"))
+    # Compute the technical indicators from the candles in the state
+    sdf = sdf.apply(
+        compute_indicators,
+        stateful=True,
+    )
+
+    sdf = sdf.update(lambda value: logger.debug(f"Final message: {value}"))
 
     sdf = sdf.to_topic(topic=output_topic)
 

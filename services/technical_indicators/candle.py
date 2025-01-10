@@ -44,10 +44,15 @@ def update_candles(
     if len(candles) > MAX_CANDLES_IN_STATE:
         candles.pop(0)
 
+    # TODO: we should check the candles have no missing values
+    # This can happen for low volume pairs. In this case we could interpolate the missing windows
+
     logger.debug(f"Number of candles in state for {candle["pair"]}: {len(candles)}")
 
     # Update the state with a new candle
     state.set("candles", candles)
+
+    return candle
 
 
 def same_window(candle: dict, last_candle: dict):
