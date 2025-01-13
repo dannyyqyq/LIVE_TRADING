@@ -5,10 +5,10 @@ run-dev:
 	@export VIRTUAL_ENV=$(PWD)/.venv && uv run python run.py
 
 build:
-	docker build -f Dockerfile -t technical_indicators .
+	docker build -f Dockerfile -t technical_indicators_pandas .
 
 run: build
 	docker run -it \
 		--network redpanda_network \
 		-e KAFKA_BROKER_ADDRESS=redpanda:9092 \
-		technical_indicators
+		technical_indicators_pandas

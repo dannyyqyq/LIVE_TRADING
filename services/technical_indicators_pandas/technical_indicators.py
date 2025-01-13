@@ -1,10 +1,13 @@
 import pandas as pd
+import pandas_ta as ta
 
 
 def compute_indicators(candle: dict, state: dict) -> dict:
     """
     Compute technical indicators from candles using pandas-ta
     """
+    ta.utils.logger.set_level("INFO")
+
     # Get candles from state
     candles = state.get("candles", [])
 
