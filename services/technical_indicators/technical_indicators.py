@@ -12,6 +12,8 @@ def compute_indicators(
     """
     candles = state.get("candles", [])
 
+    # breakpoint()
+
     # Extract open, high, low , close from candle
     # open = np.array([candle["open"] for candle in candles])
     high = np.array([candle["high"] for candle in candles])

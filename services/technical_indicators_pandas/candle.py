@@ -64,13 +64,10 @@ def same_window(candle: dict, last_candle: dict):
     Returns:
         bool: True if the candles are in the same window, False otherwise
     """
-    logger.debug(
-        f"Comparing windows: {candle['window_start_ms']} - {candle['window_end_ms']} vs. {last_candle['window_start_ms']} - {last_candle['window_end_ms']}"
-    )
     is_same_window = (
         candle["window_start_ms"] == last_candle["window_start_ms"]
         and candle["window_end_ms"] == last_candle["window_end_ms"]
         and candle["pair"] == last_candle["pair"]
     )
-    logger.debug(f"Same window: {is_same_window}")
+
     return is_same_window
