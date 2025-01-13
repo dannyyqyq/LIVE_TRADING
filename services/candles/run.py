@@ -150,6 +150,8 @@ def main(
         ]
     ]
 
+    sdf["candle_seconds"] = candle_seconds
+
     # For debugging purposes, log the candles
     # sdf = sdf.print() # Can use this to debug the candles too
     sdf = sdf.update(lambda value: logger.info(f"Candle: {value}"))
