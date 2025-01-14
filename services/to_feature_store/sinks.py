@@ -62,4 +62,4 @@ class HopsWorksFeatureStoreSink(BatchingSink):
                 retry_after=30.0,
                 topic=batch.topic,
                 partition=batch.partition,
-            ) from err
+            ) from err  # Chain the exception
