@@ -5,10 +5,11 @@ from typing import List
 from loguru import logger
 from websocket import create_connection
 
+from .base import TradesAPI
 from .trade import Trade
 
 
-class KrakenWebsocketAPI:
+class KrakenWebsocketAPI(TradesAPI):
     URL = (
         "wss://ws.kraken.com/v2"  # https://docs.kraken.com/api/docs/websocket-v2/trade
     )
@@ -25,6 +26,7 @@ class KrakenWebsocketAPI:
         # subscribe to the Kraken Websocket API
         self._subscribe()
 
+    # Abstrac method 1
     def get_trades(self) -> List[Trade]:
         """
         Fetches the trades from the Kraken Websocket APIs and return them as a list of Trade objects
@@ -58,7 +60,7 @@ class KrakenWebsocketAPI:
         trades = []
 
         for trade in trades_data:
-            trade_obj = Trade.from_kraken_api_response(
+            trade_obj = Trade.from_kraken_websocket_api_response(
                 pair=trade["symbol"],
                 price=trade["price"],
                 volume=trade["qty"],
@@ -66,16 +68,10 @@ class KrakenWebsocketAPI:
             )
             trades.append(trade_obj)
 
-        # trades = [Trade(
-        #     pair=trade["symbol"],
-        #     price=trade["price"],
-        #     volume=trade["qty"],
-        #     timestamp=trade["timestamp"],
-        # ) for trade in trades_data]
-
-        # breakpoint()
-
         return trades
+
+    def is_done(self) -> bool:
+        return False
 
     def _subscribe(self):
         """

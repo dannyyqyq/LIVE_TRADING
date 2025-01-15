@@ -1,5 +1,4 @@
-from typing import Union
-
+from kraken_api.base import TradesAPI
 from kraken_api.mock import KrakenMockAPI
 from kraken_api.websocket import KrakenWebsocketAPI
 from loguru import logger
@@ -9,7 +8,7 @@ from quixstreams import Application
 def main(
     kafka_broker_address: str,
     kafka_topic: str,
-    kraken_api: Union[KrakenWebsocketAPI, KrakenMockAPI],
+    trades_api: TradesAPI,
 ):
     """
     It does 2 things:
@@ -19,7 +18,7 @@ def main(
     Args:
         kafka_broker_address: str
         kafka_topic: str
-        kraken_api: Union[KrakenWebsocketAPI, KrakenMockAPI]
+        TradesAPI: 2 methods to read trades and push to Kafka: get_trades and is_done
     Returns:
         None
     """
@@ -35,7 +34,7 @@ def main(
     topic = app.topic(name=kafka_topic, value_serializer="json")
 
     with app.get_producer() as producer:
-        while True:
+        while not trades_api.is_done():
             trades = kraken_api.get_trades()
             for trade in trades:
                 # serialize the trade as bytes
@@ -52,11 +51,22 @@ def main(
 if __name__ == "__main__":
     from config import config
 
-    kraken_api = KrakenWebsocketAPI(pairs=config.pairs)
-    # kraken_api = KrakenMockAPI(pair=config.pairs[0])
+    # Initialize the Kraken API dependencies
+    if config.data_source == "live":
+        kraken_api = KrakenWebsocketAPI(pairs=config.pairs)
+    elif config.data_source == "historical":
+        # TODO: remove this once we are done debugging the KrakenRestAPISinglePair
+        # kraken_api = KrakenRestAPI(pairs=config.pairs)
+        from kraken_api.rest import KrakenRestAPISinglePair
+
+        kraken_api = KrakenRestAPISinglePair(
+            pair=config.pairs[0], last_n_days=config.last_n_days
+        )
+    else:
+        kraken_api = KrakenMockAPI(pairs=config.pairs)
 
     main(
         kafka_broker_address=config.kafka_broker_address,
         kafka_topic=config.kafka_topic,
-        kraken_api=kraken_api,
+        trades_api=kraken_api,
     )

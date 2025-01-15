@@ -379,6 +379,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "quixstreams" },
+    { name = "requests" },
     { name = "websocket-client" },
 ]
 
@@ -388,6 +389,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "pydantic-settings", specifier = ">=2.6.1" },
     { name = "quixstreams", specifier = "==3.2.1" },
+    { name = "requests", specifier = ">=2.32.3" },
     { name = "websocket-client", specifier = ">=1.8.0" },
 ]
 
